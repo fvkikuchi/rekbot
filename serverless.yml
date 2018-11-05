@@ -1,0 +1,65 @@
+service:
+  name: rekbot
+  awsTracingConfig:
+    mode: Active
+
+plugins:
+  - serverless-plugin-typescript
+  - serverless-offline
+
+custom:
+  bucket: EDIT_HERE
+  region: EDIT_HERE
+  slack:
+    accessToken: EDIT_HERE
+    verificationToken: EDIT_HERE
+
+resources:
+  Resources:
+    RekbotStore:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:custom.bucket}
+        LifecycleConfiguration:
+          Rules:
+            - Status: Enabled
+              ExpirationInDays: 7
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+  stage: dev
+  region: ${self:custom.region}
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+        - s3:PutObjectAcl
+      Resource: "arn:aws:s3:::${self:custom.bucket}/*"
+    - Effect: Allow
+      Action:
+        - rekognition:*
+        - xray:PutTraceSegments
+        - xray:PutTelemetryRecords
+        - lambda:InvokeAsync
+        - lambda:InvokeFunction
+        - lambda:ListFunctions
+      Resource: "*"
+
+functions:
+  handleFile:
+    handler: index.handleFile
+    timeout: 300
+    environment:
+      ACCESS_TOKEN: ${self:custom.slack.accessToken}
+      BUCKET_NAME: ${self:custom.bucket}
+      REGION: ${self:custom.region}
+  slack:
+    handler: index.slack
+    environment:
+      HANDLE_FILE: "${self:service.name}-${self:provider.stage}-handleFile"
+      VERIFICATION_TOKEN: ${self:custom.slack.verificationToken}
+    events:
+      - http:
+          method: post
+          path: rekbot

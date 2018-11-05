@@ -1,0 +1,28 @@
+{
+  "name": "rekbot",
+  "version": "1.0.0",
+  "description": "rekbot",
+  "main": "handler.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.337.0",
+    "aws-xray-sdk": "^2.0.1",
+    "jimp": "^0.5.4",
+    "node-fetch": "^2.2.0",
+    "source-map-support": "^0.5.9"
+  },
+  "devDependencies": {
+    "@types/aws-lambda": "8.10.1",
+    "@types/node": "^8.0.57",
+    "@types/node-fetch": "^2.1.2",
+    "serverless-offline": "^3.27.0",
+    "serverless-plugin-typescript": "^1.1.5",
+    "ts-node": "^7.0.1",
+    "tslint": "^5.11.0",
+    "tslint-config-airbnb": "^5.11.0",
+    "typescript": "^2.9.2"
+  },
+  "license": "MIT"
+}
